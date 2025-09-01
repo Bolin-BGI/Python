@@ -80,6 +80,8 @@ def plot_horizontal_barplot(
     # 保存 or 显示
     if save:
         plt.savefig(save_path, dpi=300)
+        plt.show()
         plt.close()
+        
     else:
         plt.show()
