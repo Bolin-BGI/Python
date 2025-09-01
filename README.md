@@ -82,7 +82,7 @@ group_barplot(adata, group_x='monkey', group_y='celltype_dmt', prefix="barplot")
 
 ---
 
-### split\_group\_stacked\_barplot
+### plot_horizontal_barplot
 
 ```python
 plot_horizontal_barplot(
