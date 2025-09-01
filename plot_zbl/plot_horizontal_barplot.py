@@ -8,7 +8,8 @@ def plot_horizontal_barplot(
     figsize=(8, 12),
     fontsize=12,
     save=False,
-    save_path="celltype_barplot.png"
+    save_path="celltype_barplot.png",
+    title=None
 ):
     """
     绘制细胞比例横向柱状图（由多到少排序），在每个柱子后标注百分比值
@@ -21,7 +22,8 @@ def plot_horizontal_barplot(
         figsize=(10, 14),
         fontsize=14,
         save=False,
-        save_path="final_annotation_barplot.png"
+        save_path="final_annotation_barplot.png",
+        title="My Custom Title"
     )
 
     参数
@@ -38,6 +40,8 @@ def plot_horizontal_barplot(
         是否保存图片
     save_path : str, default="celltype_barplot.png"
         保存路径（仅当 save=True 生效）
+    title : str or None, default=None
+        图标题（如果为 None，则使用默认标题）
     """
 
     # 统计比例
@@ -60,19 +64,23 @@ def plot_horizontal_barplot(
 
     plt.xlabel('Percentage (%)', fontsize=fontsize)
     plt.ylabel(obs_col, fontsize=fontsize+1)
-    plt.title(f'Cell type composition (sorted by percentage) - {obs_col}', fontsize=fontsize+2)
+
+    if title is None:
+        title = f'Celltype composition (sorted by percentage) - {obs_col}'
+    plt.title(title, fontsize=fontsize+2)
+
     plt.xticks(fontsize=fontsize)
-    plt.yticks(fontsize=fontsize-3)
+    plt.yticks(fontsize=fontsize-4)
 
     # 在柱子后添加百分比标签
     for i, (perc, celltype) in enumerate(zip(df['Percentage'], df['Celltype'])):
         ax.text(
-            perc + 0.1,  # 在柱子末端稍微偏右
+            perc + 0.1,
             i,
             f"{perc:.2f}%",
             va='center',
             ha='left',
-            fontsize=fontsize-3
+            fontsize=fontsize-4
         )
 
     plt.tight_layout()
@@ -82,6 +90,5 @@ def plot_horizontal_barplot(
         plt.savefig(save_path, dpi=300)
         plt.show()
         plt.close()
-        
     else:
         plt.show()
