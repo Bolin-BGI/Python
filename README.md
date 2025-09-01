@@ -81,3 +81,21 @@ group_barplot(adata, group_x='monkey', group_y='celltype_dmt', prefix="barplot")
 <img width="1566" height="682" alt="image" src="https://github.com/user-attachments/assets/62860f7b-b4c4-4533-8572-3ee7ce0224ea" />
 
 ---
+
+### split\_group\_stacked\_barplot
+
+```python
+plot_horizontal_barplot(
+    adata_ref,
+    obs_col="final_annotation",
+    figsize=(10, 14),
+    fontsize=14,
+    save=False,
+    save_path="final_annotation_barplot.png"
+)
+```
+
+
+<img width="947" height="1294" alt="image" src="https://github.com/user-attachments/assets/dc234787-215f-4aef-900d-ab666980eb46" />
+
+---
