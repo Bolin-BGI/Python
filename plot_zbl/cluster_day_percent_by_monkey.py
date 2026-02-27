@@ -58,8 +58,8 @@ def cluster_day_percent_by_monkey(
     
     # 6. 准备绘图颜色
     monkeys = data_summary[monkey_col].unique()
-    # 你的附图用的是典型的红蓝配色，这里可以用 'Set1' 贴近原图风格
-    palette = sns.color_palette("Set1", len(monkeys)) 
+    # 你的附图用的是典型的红蓝配色，这里可以用 'Set1' 贴近原图风格，也可使用 'bright' 调色板
+    palette = sns.color_palette("Set1", len(monkeys))   
     color_map = {monkey: palette[i] for i, monkey in enumerate(monkeys)}
 
     # ====== 核心：自定义平滑绘图函数 ======
