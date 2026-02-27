@@ -52,7 +52,8 @@ cluster_day_percent_by_monkey(
 )
 ```
 
-<img width="1740" height="852" alt="image" src="https://github.com/user-attachments/assets/0d9c5da9-2b8c-41b9-a89c-f32847afd979" />
+<img width="270" height="148" alt="image" src="https://github.com/user-attachments/assets/aea64d70-7a8e-4c86-a6ed-4e0ce9f74c54" />
+<img width="270" height="121" alt="image" src="https://github.com/user-attachments/assets/ebb41534-f11b-46f9-9fcc-0c006b20fd10" />
 
 ---
 
