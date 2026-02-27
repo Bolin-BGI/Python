@@ -47,8 +47,9 @@ cluster_day_percent_by_monkey(
     'celltype_51',
     'day',
     'monkey',
-    prefix="M14",
-    monkey_select=["M1", "M4"]
+    prefix="TEST_M14",
+    monkey_select=["M1", "M4"],
+    smooth=True
 )
 ```
 <img width="1129" height="712" alt="image" src="https://github.com/user-attachments/assets/90e8dbe9-4da1-4e1f-8ae1-35938aaab24b" />
