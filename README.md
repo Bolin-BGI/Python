@@ -51,9 +51,9 @@ cluster_day_percent_by_monkey(
     monkey_select=["M1", "M4"]
 )
 ```
+<img width="1129" height="712" alt="image" src="https://github.com/user-attachments/assets/90e8dbe9-4da1-4e1f-8ae1-35938aaab24b" />
+<img width="1112" height="711" alt="image" src="https://github.com/user-attachments/assets/97525227-439d-4e9c-bdb8-19930f977801" />
 
-<img width="270" height="148" alt="image" src="https://github.com/user-attachments/assets/aea64d70-7a8e-4c86-a6ed-4e0ce9f74c54" />
-<img width="270" height="121" alt="image" src="https://github.com/user-attachments/assets/ebb41534-f11b-46f9-9fcc-0c006b20fd10" />
 
 ---
 
