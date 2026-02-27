@@ -56,6 +56,23 @@ cluster_day_percent_by_monkey(
 
 ---
 
+### cluster_day_percent_relative_by_monkey
+
+```python
+cluster_day_percent_relative_by_monkey(
+    adata,
+    'celltype_51',
+    'day',
+    'monkey',
+    prefix="0227_M14",
+    monkey_select=["M1", "M4"]
+)
+```
+<img width="1617" height="1188" alt="image" src="https://github.com/user-attachments/assets/224d5eac-3b5d-42eb-9f7d-9435353267c9" />
+
+
+---
+
 ### split\_group\_stacked\_barplot
 
 ```python
