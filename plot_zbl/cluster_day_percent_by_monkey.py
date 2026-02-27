@@ -52,6 +52,10 @@ def cluster_day_percent_by_monkey(
         if data_summary.empty:
             raise ValueError("筛选后的数据为空，请检查monkey_select的取值。")
 
+    # 调试输出
+    print("Data summary head:")
+    print(data_summary.head())  
+    
     # 6. 准备绘图颜色
     monkeys = data_summary[monkey_col].unique()
     # 你的附图用的是典型的红蓝配色，这里可以用 'Set1' 贴近原图风格
