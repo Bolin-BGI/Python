@@ -7,12 +7,14 @@ from scipy.interpolate import PchipInterpolator
 
 def cluster_day_percent_by_monkey(
     adata, group, day_col, monkey_col, prefix="",
-    monkey_select=None,
-    smooth=False  # ====== 新增：是否平滑曲线参数 ======
+    monkey_select=None, 
+    color=None,
+    smooth=False,
+    figsize=(20, 15)  # ====== 新增：图片大小参数，默认 (20, 15) ======
 ):
     """
     绘制adata对象中 cluster 的绝对比例随 day 变化的图片，按 monkey 分类。
-    可指定只展示部分 monkey 的数据，支持曲线平滑。
+    可指定只展示部分 monkey 的数据，支持曲线平滑与自定义颜色、图片大小。
     
     参数:
      adata: AnnData对象
@@ -21,7 +23,9 @@ def cluster_day_percent_by_monkey(
      monkey_col: 表示monkey的列名 (str)
      prefix: 保存图片时的文件名前缀 (str)
      monkey_select: list, 只展示指定的monkey类别，例如["M1","M4"]
+     color: list, 自定义monkey的颜色，顺序需与 monkey_select 一致，例如["red", "blue"]
      smooth: bool, 是否对折线进行平滑处理 (默认 False)
+     figsize: tuple, 输出图片的宽和高 (默认 (20, 15))
     """
     # 1. 验证输入参数
     if group not in adata.obs.columns:
@@ -54,22 +58,30 @@ def cluster_day_percent_by_monkey(
 
     # 调试输出
     print("Data summary head:")
-    print(data_summary.head())  
-    
+    print(data_summary.head()) 
+            
     # 6. 准备绘图颜色
     monkeys = data_summary[monkey_col].unique()
-    # 你的附图用的是典型的红蓝配色，这里可以用 'Set1' 贴近原图风格，也可使用 'bright' 调色板
-    palette = sns.color_palette("Set1", len(monkeys))   
-    color_map = {monkey: palette[i] for i, monkey in enumerate(monkeys)}
+    
+    if color is not None:
+        if monkey_select is not None:
+            if len(color) != len(monkey_select):
+                raise ValueError("提供的 color 列表长度必须与 monkey_select 列表长度一致！")
+            color_map = {m: c for m, c in zip(monkey_select, color)}
+        else:
+            if len(color) != len(monkeys):
+                raise ValueError("未提供 monkey_select 时，color 列表长度必须与实际存在的 monkey 数量一致！")
+            color_map = {m: c for m, c in zip(monkeys, color)}
+    else:
+        palette = sns.color_palette("Set1", len(monkeys)) 
+        color_map = {monkey: palette[i] for i, monkey in enumerate(monkeys)}
 
-    # ====== 核心：自定义平滑绘图函数 ======
+    # 自定义平滑绘图函数 
     def _plot_lines(data, x, y, hue, color_dict, is_smooth, **kwargs):
-        # 建立类别到数字的映射，方便插值
         categories = data[x].cat.categories
         cat_to_num = {cat: i for i, cat in enumerate(categories)}
         
         for hue_name, group_data in data.groupby(hue, observed=False):
-            # 确保按时间顺序排列
             group_data = group_data.sort_values(by=x).dropna(subset=[y])
             if group_data.empty:
                 continue
@@ -79,32 +91,29 @@ def cluster_day_percent_by_monkey(
             current_color = color_dict.get(hue_name, 'black')
 
             if is_smooth and len(x_vals) >= 3:
-                # 开启平滑且数据点>=3时进行插值
                 x_smooth = np.linspace(x_vals.min(), x_vals.max(), 300)
-                # 使用 Pchip 防止曲线产生负数比例或剧烈抖动
                 interp = PchipInterpolator(x_vals, y_vals)
                 y_smooth = interp(x_smooth)
-                y_smooth = np.clip(y_smooth, 0, None) # 彻底截断负值
+                y_smooth = np.clip(y_smooth, 0, None) 
                 
-                # 画平滑线 + 原始散点
                 plt.plot(x_smooth, y_smooth, color=current_color, linewidth=2.5)
                 plt.scatter(x_vals, y_vals, color=current_color, s=20)
             else:
-                # 不平滑或数据点不够时，画普通折线
                 plt.plot(x_vals, y_vals, marker='o', color=current_color, linewidth=2.5, markersize=4)
-    # ====================================
 
     # 7. 开始绘图
-    plt.figure(figsize=(20, 15))
+    # ====== 修改：移除了无效的 plt.figure(figsize=(20, 15)) ======
     sns.set_theme(style="whitegrid")
 
-    # 注意这里 sharey=False 才能让每个细胞群自适应 Y 轴（和你的附图一致）
     g = sns.FacetGrid(
         data_summary, col="label", col_wrap=4, height=3.5, aspect=1.2, 
         sharex=False, sharey=False
     )
     
-    # 映射自定义函数
+    # ====== 新增：在这里强制应用你传入的 figsize ======
+    g.fig.set_size_inches(figsize[0], figsize[1])
+    # ===============================================
+
     g.map_dataframe(
         _plot_lines, x=day_col, y="proportion", hue=monkey_col, 
         color_dict=color_map, is_smooth=smooth
@@ -112,22 +121,21 @@ def cluster_day_percent_by_monkey(
 
     # 8. 调整刻度与外观
     for ax in g.axes.flat:
-        # 重置 X 轴刻度，因为插值使用了数字索引
         ax.set_xticks(range(len(days_order)))
-        ax.set_xticklabels(days_order, rotation=45) 
+        ax.set_xticklabels(days_order, rotation=0) 
         
         ax.set_xlabel('Day', fontsize=12)
         ax.set_ylabel('Proportion (%)', fontsize=12)
         ax.tick_params(axis='both', labelsize=10)
         
-        # 添加外边框（类似附图的方框风格）
         for spine in ax.spines.values():
             spine.set_visible(True)
             spine.set_color('black')
             spine.set_linewidth(1.2)
 
     # 9. 手动添加统一的图例
-    handles = [plt.Line2D([0], [0], color=color_map[m], lw=2.5, label=m) for m in monkeys]
+    legend_monkeys = monkey_select if monkey_select is not None else monkeys
+    handles = [plt.Line2D([0], [0], color=color_map[m], lw=2.5, label=m) for m in legend_monkeys]
     g.fig.legend(handles=handles, title='Monkey', loc='center right', bbox_to_anchor=(0.98, 0.5))
 
     # 调整布局留出图例空间
@@ -135,6 +143,10 @@ def cluster_day_percent_by_monkey(
     title_suffix = "(Smoothed)" if smooth else ""
     g.fig.suptitle(f'Absolute Clusters Proportion Over Days {title_suffix}', fontsize=16, fontweight='bold')
 
-    # 保存与展示
+    # 10. 保存与展示
     g.savefig(f"{prefix}_{group}_percent_smooth_{smooth}.png", dpi=300, bbox_inches='tight')
+    g.savefig(f"{prefix}_{group}_percent_smooth_{smooth}.pdf", bbox_inches='tight')
+    
     plt.show()
+
+
